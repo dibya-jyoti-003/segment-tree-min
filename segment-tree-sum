@@ -1,0 +1,43 @@
+class NumArray {
+public:
+    vector<int> arr;
+    int size;
+    NumArray(vector<int>& nums) {
+        int n = nums.size();
+        size = n;
+        arr.resize(4*n);
+        build(0,nums,arr,0,n-1);
+    }
+    void build (int ind,vector<int>& nums,vector<int> &arr,int low,int high){
+        if (low == high) {
+            arr[ind] = nums[low];
+            return ;
+        }
+        int mid = low+(high-low)/2;
+        build(2*ind+1,nums,arr,low,mid);
+        build(2*ind+2,nums,arr,mid+1,high);
+        arr[ind] = arr[2*ind+1]+arr[2*ind+2];
+    }
+    void solve (vector<int>& arr,int index,int val,int ind,int low,int high){
+        if (low == high and high == index){
+            arr[ind] = val;
+            return;
+        }
+        int mid = low+ (high-low)/2;
+        if (index <= mid)solve(arr,index,val,2*ind+1,low,mid);
+        else solve(arr,index,val,2*ind+2,mid+1,high);
+        arr[ind] = arr[2*ind+1]+arr[2*ind+2]; 
+    }
+    void update(int index, int val) {
+        solve (arr,index,val,0,0,size-1);
+    }
+    int find(vector<int>& arr,int ind,int low ,int high,int left,int right){
+        if (low>right or high<left)return 0;
+        if (low >= left and high <= right)return arr[ind];
+        int mid = low+ (high-low)/2;
+        return find(arr,2*ind+1,low,mid,left,right)+find(arr,2*ind+2,mid+1,high,left,right);
+    }
+    int sumRange(int left, int right) {
+        return find (arr,0,0,size-1,left,right);
+    }
+};
